@@ -32,7 +32,11 @@ const Message = function(options) {
     instance.message = null;
   }
   instance.$mount();
-  document.body.appendChild(instance.$el);
+  if (options.parentId) {
+    document.getElementById(options.parentId).appendChild(instance.$el);
+  } else {
+    document.body.appendChild(instance.$el);
+  }
   let verticalOffset = options.offset || 20;
   instances.forEach(item => {
     verticalOffset += item.$el.offsetHeight + 16;
