@@ -1,5 +1,8 @@
 <template>
-  <transition name="el-message-fade" @after-leave="handleAfterLeave">
+  <transition
+    name="el-message-fade"
+    @after-leave="handleAfterLeave"
+  >
     <div
       :class="[
         'el-message',
@@ -12,14 +15,33 @@
       v-show="visible"
       @mouseenter="clearTimer"
       @mouseleave="startTimer"
-      role="alert">
-      <i :class="iconClass" v-if="iconClass"></i>
-      <i :class="typeClass" v-else></i>
+      @click="click"
+      role="alert"
+    >
+      <i
+        :class="iconClass"
+        v-if="iconClass"
+      ></i>
+      <i
+        :class="typeClass"
+        v-else
+      ></i>
       <slot>
-        <p v-if="!dangerouslyUseHTMLString" class="el-message__content">{{ message }}</p>
-        <p v-else v-html="message" class="el-message__content"></p>
+        <p
+          v-if="!dangerouslyUseHTMLString"
+          class="el-message__content"
+        >{{ message }}</p>
+        <p
+          v-else
+          v-html="message"
+          class="el-message__content"
+        ></p>
       </slot>
-      <i v-if="showClose" class="el-message__closeBtn el-icon-close" @click="close"></i>
+      <i
+        v-if="showClose"
+        class="el-message__closeBtn el-icon-close"
+        @click.stop="close"
+      ></i>
     </div>
   </transition>
 </template>
@@ -42,6 +64,7 @@
         iconClass: '',
         customClass: '',
         onClose: null,
+        onClick: null,
         showClose: false,
         closed: false,
         verticalOffset: 20,
@@ -82,6 +105,12 @@
         this.closed = true;
         if (typeof this.onClose === 'function') {
           this.onClose(this);
+        }
+      },
+
+      click() {
+        if (typeof this.onClick === 'function') {
+          this.onClick();
         }
       },
 
