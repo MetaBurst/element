@@ -2,11 +2,13 @@
   <transition
     name="dialog-fade"
     @after-enter="afterEnter"
-    @after-leave="afterLeave">
+    @after-leave="afterLeave"
+  >
     <div
       v-show="visible"
       class="el-dialog__wrapper"
-      @click.self="handleWrapperClick">
+      @click.self="handleWrapperClick"
+    >
       <div
         role="dialog"
         :key="key"
@@ -14,7 +16,8 @@
         :aria-label="title || 'dialog'"
         :class="['el-dialog', { 'is-fullscreen': fullscreen, 'el-dialog--center': center }, customClass]"
         ref="dialog"
-        :style="style">
+        :style="style"
+      >
         <div class="el-dialog__header">
           <slot name="title">
             <span class="el-dialog__title">{{ title }}</span>
@@ -24,12 +27,21 @@
             class="el-dialog__headerbtn"
             aria-label="Close"
             v-if="showClose"
-            @click="handleClose">
+            @click="handleClose"
+          >
             <i class="el-dialog__close el-icon el-icon-close"></i>
           </button>
         </div>
-        <div class="el-dialog__body" v-if="rendered"><slot></slot></div>
-        <div class="el-dialog__footer" v-if="$slots.footer">
+        <div
+          class="el-dialog__body"
+          v-if="rendered"
+        >
+          <slot></slot>
+        </div>
+        <div
+          class="el-dialog__footer"
+          v-if="$slots.footer"
+        >
           <slot name="footer"></slot>
         </div>
       </div>
@@ -66,6 +78,11 @@
       appendToBody: {
         type: Boolean,
         default: false
+      },
+
+      appendTo: {
+        type: String,
+        default: null
       },
 
       lockScroll: {
@@ -126,8 +143,11 @@
           this.$nextTick(() => {
             this.$refs.dialog.scrollTop = 0;
           });
-          if (this.appendToBody) {
+          if (this.appendToBody && !this.appendTo) {
             document.body.appendChild(this.$el);
+          }
+          if (this.appendTo) {
+            document.getElementById(this.appendTo).appendChild(this.$el);
           }
         } else {
           this.$el.removeEventListener('scroll', this.updatePopper);
@@ -196,15 +216,21 @@
       if (this.visible) {
         this.rendered = true;
         this.open();
-        if (this.appendToBody) {
+        if (this.appendToBody && !this.appendTo) {
           document.body.appendChild(this.$el);
+        }
+        if (this.appendTo) {
+          document.getElementById(this.appendTo).appendChild(this.$el);
         }
       }
     },
 
     destroyed() {
       // if appendToBody is true, remove DOM node after destroy
-      if (this.appendToBody && this.$el && this.$el.parentNode) {
+      if (this.appendToBody && !this.appendTo && this.$el && this.$el.parentNode) {
+        this.$el.parentNode.removeChild(this.$el);
+      }
+      if (this.appendTo && this.$el && this.$el.parentNode) {
         this.$el.parentNode.removeChild(this.$el);
       }
     }
