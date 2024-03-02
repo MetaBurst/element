@@ -14,7 +14,11 @@
         :key="key"
         aria-modal="true"
         :aria-label="title || 'dialog'"
-        :class="['el-dialog', { 'is-fullscreen': fullscreen, 'el-dialog--center': center }, customClass]"
+        :class="[
+          'el-dialog',
+          { 'is-fullscreen': fullscreen, 'el-dialog--center': center },
+          customClass,
+        ]"
         ref="dialog"
         :style="style"
       >
@@ -82,7 +86,7 @@
 
       appendTo: {
         type: String,
-        default: null
+        default: ''
       },
 
       lockScroll: {
@@ -143,7 +147,7 @@
           this.$nextTick(() => {
             this.$refs.dialog.scrollTop = 0;
           });
-          if (this.appendToBody && !this.appendTo) {
+          if (this.appendToBody && this.appendTo === '') {
             document.body.appendChild(this.$el);
           }
           if (this.appendTo) {
@@ -216,9 +220,10 @@
       if (this.visible) {
         this.rendered = true;
         this.open();
-        if (this.appendToBody && !this.appendTo) {
+        if (this.appendToBody && this.appendTo === '') {
           document.body.appendChild(this.$el);
         }
+
         if (this.appendTo) {
           document.getElementById(this.appendTo).appendChild(this.$el);
         }
@@ -227,9 +232,10 @@
 
     destroyed() {
       // if appendToBody is true, remove DOM node after destroy
-      if (this.appendToBody && !this.appendTo && this.$el && this.$el.parentNode) {
+      if (this.appendToBody && this.appendTo === '' && this.$el && this.$el.parentNode) {
         this.$el.parentNode.removeChild(this.$el);
       }
+
       if (this.appendTo && this.$el && this.$el.parentNode) {
         this.$el.parentNode.removeChild(this.$el);
       }
